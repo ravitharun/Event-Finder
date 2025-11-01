@@ -9,6 +9,7 @@ import {
 } from "react-icons/fa";
 import { errornotify, successnotify } from "./Toast";
 import { Toaster } from "react-hot-toast";
+import { axios } from "axios";
 
 function Form() {
   const EventTitle = useRef("");
@@ -20,7 +21,6 @@ function Form() {
   // sending the form data to the server
   const handelFormdata = async (e) => {
     try {
-      successnotify("hi");
       e.preventDefault();
       const FormData = {
         EventTitle: EventTitle.current.value,
@@ -30,7 +30,10 @@ function Form() {
         MaxParticipants: MaxParticipants.current.value,
         CurrentParticipants: CurrentParticipants.current.value,
       };
-      console.log(FormData);
+      const responseeventform = await axios.post("", { FormData });
+      if (responseeventform.data.message == "") {
+        return successnotify(responseeventform.data.message);
+      }
     } catch (err) {
       console.log(err.message);
       errornotify(err.message);
