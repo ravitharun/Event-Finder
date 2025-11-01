@@ -35,9 +35,7 @@ function EventDetails() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <MdEvent className="text-4xl text-indigo-600" />
-          <h1 className="text-3xl font-bold text-indigo-700">
-            {event.title}
-          </h1>
+          <h1 className="text-3xl font-bold text-indigo-700">{event.title}</h1>
         </div>
 
         {/* Description */}
@@ -58,7 +56,8 @@ function EventDetails() {
           <div className="flex items-center gap-3 text-gray-600 text-lg">
             <FaUsers className="text-indigo-500" />
             <span>
-              {event.currentParticipants}/{event.maxParticipants} Participants Joined
+              {event.currentParticipants}/{event.maxParticipants} Participants
+              Joined
             </span>
           </div>
         </div>

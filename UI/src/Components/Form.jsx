@@ -1,7 +1,41 @@
-import React from "react";
-import { FaUser, FaEnvelope, FaCalendarAlt, FaMapMarkerAlt, FaUsers } from "react-icons/fa";
+import React, { useRef } from "react";
+// import  successnotify  from "../Components/Toast";
+import {
+  FaUser,
+  FaEnvelope,
+  FaCalendarAlt,
+  FaMapMarkerAlt,
+  FaUsers,
+} from "react-icons/fa";
+import { errornotify, successnotify } from "./Toast";
+import { Toaster } from "react-hot-toast";
 
 function Form() {
+  const EventTitle = useRef("");
+  const Description = useRef("");
+  const Location = useRef("");
+  const DateAndTime = useRef("");
+  const MaxParticipants = useRef("");
+  const CurrentParticipants = useRef("");
+  // sending the form data to the server
+  const handelFormdata = async (e) => {
+    try {
+      successnotify("hi");
+      e.preventDefault();
+      const FormData = {
+        EventTitle: EventTitle.current.value,
+        Description: Description.current.value,
+        Location: Location.current.value,
+        DateAndTime: DateAndTime.current.value,
+        MaxParticipants: MaxParticipants.current.value,
+        CurrentParticipants: CurrentParticipants.current.value,
+      };
+      console.log(FormData);
+    } catch (err) {
+      console.log(err.message);
+      errornotify(err.message);
+    }
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white flex items-center justify-center p-6">
       <div className="bg-white w-full max-w-lg shadow-lg rounded-2xl p-8">
@@ -9,7 +43,7 @@ function Form() {
           Event Registration Form
         </h2>
 
-        <form className="space-y-6">
+        <form className="space-y-6" onSubmit={handelFormdata}>
           {/* Event Title */}
           <div>
             <label className="block text-gray-700 font-medium mb-2">
@@ -19,13 +53,14 @@ function Form() {
               <FaUser className="text-indigo-500" />
               <input
                 type="text"
+                ref={EventTitle}
                 placeholder="Enter event title"
                 required
                 className="w-full outline-none text-gray-700"
               />
             </div>
           </div>
-
+          <Toaster position="top-center" reverseOrder={false} />
           {/* Description */}
           <div>
             <label className="block text-gray-700 font-medium mb-2">
@@ -36,6 +71,7 @@ function Form() {
               <textarea
                 placeholder="Enter a short description"
                 required
+                ref={Description}
                 rows="3"
                 className="w-full outline-none text-gray-700 resize-none"
               ></textarea>
@@ -51,6 +87,7 @@ function Form() {
               <FaMapMarkerAlt className="text-indigo-500" />
               <input
                 type="text"
+                ref={Location}
                 placeholder="Enter event location"
                 required
                 className="w-full outline-none text-gray-700"
@@ -68,6 +105,7 @@ function Form() {
               <input
                 type="datetime-local"
                 required
+                ref={DateAndTime}
                 className="w-full outline-none text-gray-700"
               />
             </div>
@@ -83,6 +121,7 @@ function Form() {
                 <FaUsers className="text-indigo-500" />
                 <input
                   type="number"
+                  ref={MaxParticipants}
                   min="1"
                   placeholder="Enter max count"
                   required
@@ -100,6 +139,7 @@ function Form() {
                 <input
                   type="number"
                   min="0"
+                  ref={CurrentParticipants}
                   placeholder="Enter current count"
                   required
                   className="w-full outline-none text-gray-700"
@@ -110,7 +150,8 @@ function Form() {
 
           {/* Submit Button (UI only) */}
           <button
-            type="button"
+            type="submit"
+            // onClick={handelFormdata}
             className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-semibold py-3 rounded-lg transition"
           >
             Submit
