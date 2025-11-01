@@ -1,20 +1,46 @@
-const User = require("../models/userModel");
 
-// @desc Get all users
-// @route GET /api/users
-const getUsers = async (req, res) => {
-  const users = await User.find();
-  res.json(users);
+const Event = require("../models/userModel");
+
+// get the event details
+const getEventDetails = async (req, res) => {
+  try {
+    // get the all events from db
+    const GetEventDetails = await Event.find({})
+    // validate the json data based on the length <=0 --> no data found 
+    if (GetEventDetails.length <= 0) {
+      return res.status(200).json({ message: "No event Found " })
+    }
+    res.json({ message: GetEventDetails });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
-// @desc Create a user
-// @route POST /api/users
-const createUser = async (req, res) => {
-  const { name, email } = req.body;
-  const user = new User({ name, email });
-  await user.save();
-  res.status(201).json(user);
+// createEvent route to save the form data of the Event
+const createEvent = async (req, res) => {
+  try {
+    const { FormData } = req.body;
+    console.log(FormData, "FormData");
+    // validate the data 
+    if (!FormData.EventTitle && !FormData.Description && !FormData.Location && !FormData.MaxParticipants && !FormData.CurrentParticipants) {
+      return res.status(404).json({ message: "Missing The Feilds Of The Input." })
+    }
+    // Make use of schema db model
+    const Eventmodel = await new Event({
+      EventTitle: FormData.EventTitle,
+      Description: FormData.Description,
+      Location: FormData.Location,
+      DateAndTime: FormData.DateAndTime,
+      MaxParticipants: Number(FormData.MaxParticipants),
+      CurrentParticipants: Number(FormData.CurrentParticipants),
+    })
+
+    // save in the db
+    await Eventmodel.save()
+    res.status(200).json({ message: "The data is saved  in the Db" })
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
-// ✅ make sure you export BOTH like this
-module.exports = { getUsers, createUser };
+module.exports = { getEventDetails, createEvent };
