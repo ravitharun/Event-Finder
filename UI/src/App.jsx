@@ -6,9 +6,9 @@ import EventDetils from './Components/EventDetils'
 function App() {
   return (
     <>
-    <Form></Form>
+    {/* <Form></Form> */}
      <EventDisplay></EventDisplay> 
-     <EventDetils></EventDetils>
+     {/* <EventDetils></EventDetils> */}
     </>
   )
 }
