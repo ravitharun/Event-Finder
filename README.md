@@ -96,15 +96,7 @@ UI runs at http://localhost:5173 (or your configured port).
 
 ---
 
-## ✅ Bonus Features (Optional)
 
-- Search/filter events by title/location  
-- Distance calculation from user’s location  
-- UI loading and error states  
-- TypeScript for both frontend & backend  
-- Deployed/live version with accessible URL
-
----
 
 ## 🧾 What I Learned & Challenges
 

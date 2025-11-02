@@ -1,18 +1,33 @@
 import React from "react";
+import { useEffect } from "react";
+import { useState } from "react";
 import { FaMapMarkerAlt, FaCalendarAlt, FaUsers } from "react-icons/fa";
 import { MdEvent } from "react-icons/md";
+import { useLocation } from "react-router-dom";
+import { errornotify } from "./Toast";
+import axios from "axios";
 
 function EventDetails() {
-  // Sample event (you can later pass it as props or fetch by ID)
-  const event = {
-    title: "Frontend Jam: Tailwind Workshop",
-    description:
-      "A hands-on workshop designed to help developers master Tailwind CSS. Participants will build responsive layouts and modern UI components from scratch while learning best practices for utility-first CSS.",
-    location: "Bangalore, India",
-    date: "2025-11-15T14:00:00",
-    maxParticipants: 40,
-    currentParticipants: 18,
-  };
+  const location = useLocation();
+  const { EventId } = location.state || {};
+  const [event, setevent] = useState([]);
+
+  useEffect(() => {
+    const getEventById = async () => {
+      try {
+        const Event = await axios.get(`http://localhost:3000/api/events/${EventId}`)
+        console.log("getById.data.message", Event.data.message)
+        setevent(Event.data.message)
+
+      }
+      catch (err) {
+        errornotify(err.message)
+      }
+    }
+    getEventById()
+
+  }, [EventId])
+
 
   const formatDate = (isoString) => {
     const date = new Date(isoString);
@@ -25,9 +40,7 @@ function EventDetails() {
     });
   };
 
-  const progress = Math.round(
-    (event.currentParticipants / event.maxParticipants) * 100
-  );
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white flex justify-center items-center p-6">
@@ -35,28 +48,28 @@ function EventDetails() {
         {/* Header */}
         <div className="flex items-center gap-3 mb-6">
           <MdEvent className="text-4xl text-indigo-600" />
-          <h1 className="text-3xl font-bold text-indigo-700">{event.title}</h1>
+          <h1 className="text-3xl font-bold text-indigo-700">{event.EventTitle}</h1>
         </div>
 
         {/* Description */}
         <p className="text-gray-700 leading-relaxed mb-6">
-          {event.description}
+          {event.Description}
         </p>
 
         {/* Info Section */}
         <div className="space-y-4 mb-8">
           <div className="flex items-center gap-3 text-gray-600 text-lg">
             <FaMapMarkerAlt className="text-indigo-500" />
-            <span>{event.location}</span>
+            <span>{event.Location}</span>
           </div>
           <div className="flex items-center gap-3 text-gray-600 text-lg">
             <FaCalendarAlt className="text-indigo-500" />
-            <span>{formatDate(event.date)}</span>
+            <span>{formatDate(event.DateAndTime)}</span>
           </div>
           <div className="flex items-center gap-3 text-gray-600 text-lg">
             <FaUsers className="text-indigo-500" />
             <span>
-              {event.currentParticipants}/{event.maxParticipants} Participants
+              {event.CurrentParticipants}/{event.MaxParticipants} Participants
               Joined
             </span>
           </div>
@@ -66,12 +79,12 @@ function EventDetails() {
         <div className="mb-8">
           <div className="flex justify-between text-sm text-gray-500 mb-2">
             <span>Event Capacity</span>
-            <span>{progress}% Filled</span>
+            <span>{event.Progress}% Filled</span>
           </div>
           <div className="w-full bg-gray-200 rounded-full h-3">
             <div
               className="bg-indigo-600 h-3 rounded-full transition-all"
-              style={{ width: `${progress}%` }}
+              style={{ width: `${event.Progress}%` }}
             ></div>
           </div>
         </div>

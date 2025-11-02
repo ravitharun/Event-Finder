@@ -1,6 +1,7 @@
 
 const Event = require("../models/userModel");
 
+
 // get the event details
 const getEventDetails = async (req, res) => {
   try {
@@ -44,4 +45,28 @@ const createEvent = async (req, res) => {
   }
 };
 
-module.exports = { getEventDetails, createEvent };
+
+// GeteventByid
+const GetEventById = async (req, res) => {
+  try {
+    const { EventId } = req.params; // expects route like /events/:id
+   
+    if (!EventId) {
+      return res.status(400).json({ message: "Event ID not provided" });
+    }
+
+    const event = await Event.findById({_id:EventId});
+    console.log(event, 'event')
+
+    if (!event) {
+      return res.status(404).json({ message: "Event not found" });
+    }
+
+    res.json({message:event});
+  } catch (error) {
+    console.error("Error fetching event:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
+  }
+};
+
+module.exports = { getEventDetails, createEvent, GetEventById };

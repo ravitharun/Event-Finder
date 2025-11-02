@@ -5,11 +5,12 @@ import Form from "./Form";
 import { errornotify, successnotify } from "./Toast";
 import axios from "axios";
 import { Toaster } from "react-hot-toast";
+import { Link, useNavigate } from "react-router-dom";
 function EventDisplay() {
   const [isOpen, setOpen] = useState(false);
 
   // Sample events
-  const events = [
+  const [events, setevents] = useState([
     {
       id: 1,
       title: "Frontend Jam: Tailwind Workshop",
@@ -40,7 +41,7 @@ function EventDisplay() {
       maxParticipants: 100,
       currentParticipants: 64,
     },
-  ];
+  ]);
 
   // Prevent background scroll while modal is open
   useEffect(() => {
@@ -60,6 +61,7 @@ function EventDisplay() {
       try {
         const getdata = await axios.get('http://localhost:3000/api/events');
         console.log(getdata.data.message)
+        setevents(getdata.data.message)
         successnotify("data fetched")
       }
       catch (err) {
@@ -81,7 +83,14 @@ function EventDisplay() {
       minute: "2-digit",
     });
   };
+  // HandelDetails
+  const naviaget = useNavigate("")
+  const HandelDetails = (EventId) => {
+    console.log(EventId, 'EventId')
 
+    naviaget("/evnetDetails", { state: { EventId: EventId } });
+
+  }
   return (
     <>
       {/* Add Event Button */}
@@ -93,7 +102,7 @@ function EventDisplay() {
           + Add Event
         </button>
       </div>
-           <Toaster position="top-center" />
+      <Toaster position="top-center" />
 
       {/* Popup Modal */}
 
@@ -133,63 +142,85 @@ function EventDisplay() {
           </h1>
         </div>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
-          {events.map((event) => {
-            const progress = Math.round(
-              (event.currentParticipants / event.maxParticipants) * 100
-            );
+        {events.length <= 0 ? (
+          <div className="text-center text-gray-500 text-lg mt-10">
+            🎭 No events found
+          </div>
+        ) : (
+          <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+            {events.map((event) => {
+              const progress = Math.round(
+                (event.CurrentParticipants / event.MaxParticipants) * 100
+              );
 
-            return (
-              <div
-                key={event.id}
-                className="bg-white/90 backdrop-blur-md border border-gray-100 rounded-2xl shadow-md hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 p-6 flex flex-col justify-between"
-              >
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-800 mb-2 hover:text-indigo-600 transition-colors">
-                    {event.title}
-                  </h2>
-                  <p className="text-gray-600 text-sm mb-4 leading-relaxed">
-                    {event.description}
-                  </p>
+              return (
+                <div
+                  key={event._id}
+                  className="group relative bg-gradient-to-br from-indigo-50 to-white border border-gray-200 rounded-2xl shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 p-6 flex flex-col justify-between"
+                >
+                  {/* Decorative Glow */}
+                  <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 blur-2xl bg-gradient-to-r from-indigo-200 via-purple-200 to-transparent rounded-2xl" />
 
-                  <div className="flex items-center gap-2 text-gray-500 text-sm mb-1">
-                    <FaMapMarkerAlt className="text-indigo-500" />
-                    {event.location}
-                  </div>
-                  <div className="flex items-center gap-2 text-gray-500 text-sm mb-4">
-                    <FaCalendarAlt className="text-indigo-500" />
-                    {formatDate(event.date)}
+                  <div className="relative z-10">
+                    {/* Title */}
+                    <h2 className="text-2xl font-bold text-gray-800 mb-2 group-hover:text-indigo-600 transition-colors">
+                      {event.EventTitle}
+                    </h2>
+
+                    {/* Description */}
+                    <p className="text-gray-600 text-sm mb-4 leading-relaxed line-clamp-3">
+                      {event.Description}
+                    </p>
+
+                    {/* Location & Date */}
+                    <div className="space-y-1 text-sm text-gray-500">
+                      <div className="flex items-center gap-2">
+                        <FaMapMarkerAlt className="text-indigo-500" />
+                        <span>{event.Location}</span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <FaCalendarAlt className="text-indigo-500" />
+                        <span>{formatDate(event.DateAndTime)}</span>
+                      </div>
+                    </div>
+
+                    {/* Progress Bar */}
+                    <div className="mt-4">
+                      <div className="w-full bg-gray-200 rounded-full h-2">
+                        <div
+                          className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all"
+                          style={{ width: `${progress}%` }}
+                        />
+                      </div>
+                      <div className="flex justify-between text-xs text-gray-500 mt-1">
+                        <span className="flex items-center gap-1">
+                          <FaUserFriends className="text-indigo-500" />
+                          {event.CurrentParticipants}/{event.MaxParticipants} joined
+                        </span>
+                        <span>{progress}% filled</span>
+                      </div>
+                    </div>
                   </div>
 
-                  {/* Progress Bar */}
-                  <div className="w-full bg-gray-200 rounded-full h-2 mb-2">
-                    <div
-                      className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all"
-                      style={{ width: `${progress}%` }}
-                    />
-                  </div>
-                  <div className="flex justify-between text-xs text-gray-500 mb-4 items-center">
-                    <span className="flex items-center gap-1">
-                      <FaUserFriends className="text-indigo-500" />
-                      {event.currentParticipants}/{event.maxParticipants} joined
-                    </span>
-                    <span>{progress}% filled</span>
+                  {/* Buttons */}
+                  <div className="relative z-10 flex justify-between items-center mt-6">
+                    <button className="px-4 py-2 rounded-lg text-sm font-semibold bg-gradient-to-r from-indigo-500 to-purple-500 text-white hover:shadow-lg hover:scale-105 transition-all duration-300" onClick={()=>successnotify("adding soon.")}>
+                      Join Now
+                    </button>
+
+                    <button
+                      onClick={() => HandelDetails(event._id)}
+                      className="text-sm text-indigo-600 font-medium hover:text-purple-600 transition-colors underline"
+                    >
+                      View Details →
+                    </button>
                   </div>
                 </div>
+              );
+            })}
+          </div>
+        )}
 
-                {/* Buttons */}
-                <div className="flex justify-between items-center mt-3">
-                  <button className="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-100 text-indigo-700 hover:bg-indigo-200 hover:scale-105 transition">
-                    Join
-                  </button>
-                  <button className="text-sm text-gray-600 hover:text-indigo-600 hover:underline transition">
-                    View Details →
-                  </button>
-                </div>
-              </div>
-            );
-          })}
-        </div>
       </div>
 
       {/* Animation */}
