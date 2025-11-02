@@ -1,11 +1,14 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { FaMapMarkerAlt, FaCalendarAlt, FaUserFriends } from "react-icons/fa";
 import { MdEventAvailable } from "react-icons/md";
 import Form from "./Form";
-
+import { errornotify, successnotify } from "./Toast";
+import axios from "axios";
+import { Toaster } from "react-hot-toast";
 function EventDisplay() {
   const [isOpen, setOpen] = useState(false);
 
+  // Sample events
   const events = [
     {
       id: 1,
@@ -39,6 +42,35 @@ function EventDisplay() {
     },
   ];
 
+  // Prevent background scroll while modal is open
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isOpen]);
+
+  useEffect(() => {
+    const getevent = async () => {
+      try {
+        const getdata = await axios.get('http://localhost:3000/api/events');
+        console.log(getdata.data.message)
+        successnotify("data fetched")
+      }
+      catch (err) {
+
+        errornotify(err.message)
+      }
+    }
+    getevent()
+  }, [])
+
+
   const formatDate = (isoString) => {
     const date = new Date(isoString);
     return date.toLocaleString(undefined, {
@@ -61,30 +93,36 @@ function EventDisplay() {
           + Add Event
         </button>
       </div>
+           <Toaster position="top-center" />
 
       {/* Popup Modal */}
+
       {isOpen && (
         <div className="fixed inset-0 flex justify-center items-center bg-black/50 backdrop-blur-sm z-50 animate-fadeIn">
-          <div className="relative bg-white/95 backdrop-blur-xl border border-gray-200 w-[90%] md:w-[55%] lg:w-[45%] rounded-3xl shadow-2xl p-8 overflow-y-auto max-h-[90vh]">
+          <div className="relative bg-white/95 backdrop-blur-xl border border-gray-200 
+                    w-[85%] sm:w-[70%] md:w-[50%] lg:w-[40%] 
+                    h-auto max-h-[80vh] rounded-2xl shadow-2xl p-6">
             <h2 className="text-2xl md:text-3xl font-bold text-center text-indigo-700 mb-4">
               Create New Event
             </h2>
 
-            {/* Form Component (Zoomed Out) */}
-            <div className="transform scale-90 origin-top">
+            {/* Form inside smaller modal */}
+            <div className="overflow-y-auto max-h-[60vh]">
               <Form />
             </div>
 
             {/* Close Button */}
             <button
               onClick={() => setOpen(false)}
-              className="absolute top-4 right-4 text-gray-500 hover:text-indigo-600 transition text-2xl"
+              className="absolute top-3 right-4 text-gray-500 hover:text-indigo-600 transition text-2xl"
             >
               ✕
             </button>
           </div>
         </div>
       )}
+
+
 
       {/* Event Cards */}
       <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-white p-8">
@@ -128,7 +166,7 @@ function EventDisplay() {
                     <div
                       className="bg-gradient-to-r from-indigo-500 to-purple-500 h-2 rounded-full transition-all"
                       style={{ width: `${progress}%` }}
-                    ></div>
+                    />
                   </div>
                   <div className="flex justify-between text-xs text-gray-500 mb-4 items-center">
                     <span className="flex items-center gap-1">

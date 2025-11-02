@@ -6,8 +6,8 @@ import {
   FaCalendarAlt,
   FaFileAlt,
 } from "react-icons/fa";
-import { errornotify, successnotify } from "./Toast";
 import { Toaster } from "react-hot-toast";
+import { errornotify, successnotify } from "./Toast";
 import axios from "axios";
 
 function Form() {
@@ -19,7 +19,7 @@ function Form() {
   const CurrentParticipants = useRef("");
   const DefaultProgress = 0;
 
-  const handelFormdata = async (e) => {
+  const handleFormdata = async (e) => {
     e.preventDefault();
     try {
       const FormData = {
@@ -31,7 +31,8 @@ function Form() {
         CurrentParticipants: CurrentParticipants.current.value,
         Progress: DefaultProgress,
       };
-      const response = await axios.post("http://localhost:3000/createEvent", {
+
+      const response = await axios.post("http://localhost:3000/api/events", {
         FormData,
       });
       successnotify(response.data.message);
@@ -41,147 +42,122 @@ function Form() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-gray-50 via-white to-gray-100 p-8">
-      <div className="w-full max-w-3xl bg-white shadow-2xl rounded-3xl border border-gray-100 p-10 animate-fadeIn backdrop-blur-md">
-        <h2 className="text-4xl font-bold text-center text-gray-800 mb-10">
-          Create <span className="text-indigo-600">New Event</span>
-        </h2>
-
-        <form onSubmit={handelFormdata} className="space-y-10">
-          {/* Row 1 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Event Title */}
-            <div className="relative">
-              <label className="block text-sm font-semibold text-gray-600 mb-2">
-                Event Title <span className="text-red-500">*</span>
-              </label>
-              <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition-all">
-                <FaUser className="text-indigo-500 mr-3" />
-                <input
-                  ref={EventTitle}
-                  type="text"
-                  placeholder="Enter event title"
-                  required
-                  className="w-full bg-transparent outline-none text-gray-800 placeholder-gray-400"
-                />
-              </div>
-            </div>
-
-            {/* Location */}
-            <div className="relative">
-              <label className="block text-sm font-semibold text-gray-600 mb-2">
-                Location <span className="text-red-500">*</span>
-              </label>
-              <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition-all">
-                <FaMapMarkerAlt className="text-indigo-500 mr-3" />
-                <input
-                  ref={Location}
-                  type="text"
-                  placeholder="Enter location"
-                  required
-                  className="w-full bg-transparent outline-none text-gray-800 placeholder-gray-400"
-                />
-              </div>
-            </div>
+    <div className="w-full">
+      <form
+        onSubmit={handleFormdata}
+        className="space-y-6 text-gray-800"
+      >
+        <Toaster position="top-center" reverseOrder="false"></Toaster> 
+        {/* Event Title */}
+        <div>
+          <label className="block text-sm font-semibold mb-2">
+            Event Title <span className="text-red-500">*</span>
+          </label>
+          <div className="flex items-center border border-gray-300 rounded-lg px-4 py-2 focus-within:ring-2 focus-within:ring-indigo-400">
+            <FaUser className="text-indigo-500 mr-3" />
+            <input
+              ref={EventTitle}
+              type="text"
+              placeholder="Enter event title"
+              required
+              className="w-full outline-none bg-transparent placeholder-gray-400"
+            />
           </div>
+        </div>
 
-          {/* Description */}
-          <div className="relative">
-            <label className="block text-sm font-semibold text-gray-600 mb-2">
-              Description <span className="text-red-500">*</span>
-            </label>
-            <div className="flex items-start bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition-all">
-              <FaFileAlt className="text-indigo-500 mt-1 mr-3" />
-              <textarea
-                ref={Description}
-                rows="3"
-                placeholder="Write a short description about your event..."
+        {/* Location */}
+        <div>
+          <label className="block text-sm font-semibold mb-2">
+            Location <span className="text-red-500">*</span>
+          </label>
+          <div className="flex items-center border border-gray-300 rounded-lg px-4 py-2 focus-within:ring-2 focus-within:ring-indigo-400">
+            <FaMapMarkerAlt className="text-indigo-500 mr-3" />
+            <input
+              ref={Location}
+              type="text"
+              placeholder="Enter location"
+              required
+              className="w-full outline-none bg-transparent placeholder-gray-400"
+            />
+          </div>
+        </div>
+
+        {/* Description */}
+        <div>
+          <label className="block text-sm font-semibold mb-2">
+            Description <span className="text-red-500">*</span>
+          </label>
+          <div className="flex items-start border border-gray-300 rounded-lg px-4 py-2 focus-within:ring-2 focus-within:ring-indigo-400">
+            <FaFileAlt className="text-indigo-500 mt-1 mr-3" />
+            <textarea
+              ref={Description}
+              rows="3"
+              placeholder="Write a short description..."
+              required
+              className="w-full outline-none bg-transparent placeholder-gray-400 resize-none"
+            ></textarea>
+          </div>
+        </div>
+
+        {/* Date & Time */}
+        <div>
+          <label className="block text-sm font-semibold mb-2">
+            Date & Time <span className="text-red-500">*</span>
+          </label>
+          <div className="flex items-center border border-gray-300 rounded-lg px-4 py-2 focus-within:ring-2 focus-within:ring-indigo-400">
+            <FaCalendarAlt className="text-indigo-500 mr-3" />
+            <input
+              ref={DateAndTime}
+              type="datetime-local"
+              required
+              className="w-full outline-none bg-transparent"
+            />
+          </div>
+        </div>
+
+        {/* Participants */}
+        <div>
+          <label className="block text-sm font-semibold mb-2">
+            Participants <span className="text-red-500">*</span>
+          </label>
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="flex items-center border border-gray-300 rounded-lg px-4 py-2 w-full focus-within:ring-2 focus-within:ring-indigo-400">
+              <FaUsers className="text-indigo-500 mr-3" />
+              <input
+                ref={MaxParticipants}
+                type="number"
+                min="1"
+                placeholder="Max Participants"
                 required
-                className="w-full bg-transparent outline-none text-gray-800 placeholder-gray-400 resize-none"
-              ></textarea>
+                className="w-full outline-none bg-transparent placeholder-gray-400"
+              />
+            </div>
+            <div className="flex items-center border border-gray-300 rounded-lg px-4 py-2 w-full focus-within:ring-2 focus-within:ring-indigo-400">
+              <FaUsers className="text-indigo-500 mr-3" />
+              <input
+                ref={CurrentParticipants}
+                type="number"
+                min="0"
+                placeholder="Current Participants"
+                required
+                className="w-full outline-none bg-transparent placeholder-gray-400"
+              />
             </div>
           </div>
+        </div>
 
-          {/* Row 2 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {/* Date & Time */}
-            <div className="relative">
-              <label className="block text-sm font-semibold text-gray-600 mb-2">
-                Date & Time <span className="text-red-500">*</span>
-              </label>
-              <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition-all">
-                <FaCalendarAlt className="text-indigo-500 mr-3" />
-                <input
-                  ref={DateAndTime}
-                  type="datetime-local"
-                  required
-                  className="w-full bg-transparent outline-none text-gray-800"
-                />
-              </div>
-            </div>
+        {/* Submit */}
+        <button
+          type="submit"
+          className="w-full py-3 text-lg font-semibold text-white bg-gradient-to-r from-indigo-500 to-purple-600 rounded-lg hover:from-indigo-600 hover:to-purple-700 shadow-md hover:shadow-lg transition-all duration-300"
+        >
+          Submit Event
+        </button>
+      </form>
 
-            {/* Participants */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              <div>
-                <label className="block text-sm font-semibold text-gray-600 mb-2">
-                  Max Participants <span className="text-red-500">*</span>
-                </label>
-                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition-all">
-                  <FaUsers className="text-indigo-500 mr-3" />
-                  <input
-                    ref={MaxParticipants}
-                    type="number"
-                    min="1"
-                    placeholder="Max count"
-                    required
-                    className="w-full bg-transparent outline-none text-gray-800 placeholder-gray-400"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-sm font-semibold text-gray-600 mb-2">
-                  Current Participants <span className="text-red-500">*</span>
-                </label>
-                <div className="flex items-center bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 focus-within:ring-2 focus-within:ring-indigo-500 transition-all">
-                  <FaUsers className="text-indigo-500 mr-3" />
-                  <input
-                    ref={CurrentParticipants}
-                    type="number"
-                    min="0"
-                    placeholder="Current count"
-                    required
-                    className="w-full bg-transparent outline-none text-gray-800 placeholder-gray-400"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Submit */}
-          <button
-            type="submit"
-            className="w-full py-3 text-lg font-semibold text-white bg-indigo-600 rounded-xl hover:bg-indigo-700 shadow-md hover:shadow-lg transition-all"
-          >
-            Submit Event
-          </button>
-        </form>
-      </div>
-
-      <Toaster position="top-center" reverseOrder={false} />
-
-      <style>
-        {`
-          @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(15px); }
-            to { opacity: 1; transform: translateY(0); }
-          }
-          .animate-fadeIn {
-            animation: fadeIn 0.6s ease-out;
-          }
-        `}
-      </style>
+      <Toaster position="top-center" />
     </div>
   );
 }
+
 export default Form;

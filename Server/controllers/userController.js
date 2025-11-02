@@ -10,7 +10,7 @@ const getEventDetails = async (req, res) => {
     if (GetEventDetails.length <= 0) {
       return res.status(200).json({ message: "No event Found " })
     }
-    res.json({ message: GetEventDetails });
+    res.status(200).json({ message: GetEventDetails });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -33,6 +33,7 @@ const createEvent = async (req, res) => {
       DateAndTime: FormData.DateAndTime,
       MaxParticipants: Number(FormData.MaxParticipants),
       CurrentParticipants: Number(FormData.CurrentParticipants),
+      Progress: Number(FormData.Progress),
     })
 
     // save in the db
